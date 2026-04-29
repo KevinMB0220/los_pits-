@@ -6,7 +6,7 @@ import Landing from './pages/Landing';
 import Login from './pages/Login';
 import UserDashboard from './pages/UserDashboard';
 import AdminDashboard from './pages/AdminDashboard';
-import './App.css';
+
 
 // Simple Auth Context
 const AuthContext = createContext(null);
