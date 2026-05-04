@@ -201,29 +201,30 @@ const POSScanner = () => {
       <div className="pos-scanner-layout">
         <div className="pos-scanner-left">
           <div className="pos-card scanner-section">
-            <div className="scanner-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+            <div className="scanner-header mobile-stack">
               <h3><ScanBarcode size={20} /> Escáner de Código</h3>
               <button
-                className={`pos-btn ${scanning ? 'pos-btn-danger' : 'pos-btn-primary'}`}
+                className={`pos-btn ${scanning ? 'pos-btn-danger' : 'pos-btn-primary'} scanner-toggle-btn`}
                 onClick={scanning ? stopScanner : startScanner}
-                style={{ borderRadius: '12px', padding: '10px 20px', display: 'flex', alignItems: 'center', gap: '8px' }}
               >
                 {scanning ? <><CameraOff size={16} /> Detener</> : <><Camera size={16} /> Activar Cámara</>}
               </button>
             </div>
 
-            <div className="scanner-area" style={{ height: '300px' }}>
-              <div id="pos-qr-reader" ref={scannerRef} className={scanning ? 'scanner-active' : 'scanner-inactive'}>
-                {!scanning && (
-                  <div className="scanner-placeholder" style={{ background: '#080808' }}>
-                    <ScanBarcode size={48} color="rgba(255,255,255,0.1)" />
-                    <p style={{ color: '#555', marginTop: '15px' }}>Cámara Desactivada</p>
-                  </div>
-                )}
+            <div className="scanner-area-container">
+              <div className="scanner-area">
+                <div id="pos-qr-reader" ref={scannerRef} className={scanning ? 'scanner-active' : 'scanner-inactive'}>
+                  {!scanning && (
+                    <div className="scanner-placeholder">
+                      <ScanBarcode size={48} />
+                      <p>Cámara Desactivada</p>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
-            <form className="manual-code-form" onSubmit={handleManualSearch} style={{ marginTop: '20px' }}>
+            <form className="manual-code-form mobile-stack" onSubmit={handleManualSearch}>
               <input
                 type="text"
                 placeholder="Ingresa código manualmente..."
