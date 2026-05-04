@@ -48,10 +48,11 @@ const Footer = ({ minimal = false }) => {
               <div className="footer-col reveal" style={{ transitionDelay: '100ms' }}>
                 <h3>SERVICIOS</h3>
                 <ul>
-                  <li><Link to="/">Lavado Premium</Link></li>
-                  <li><Link to="/">Ceramic Coating</Link></li>
-                  <li><Link to="/">Detallado Motor</Link></li>
-                  <li><Link to="/">Corrección de Pintura</Link></li>
+                  <li><Link to="/">lavado ultra con tratamiento</Link></li>
+                  <li><Link to="/">audio</Link></li>
+                  <li><Link to="/">autodecoracion</Link></li>
+                  <li><Link to="/">viseras y calcas</Link></li>
+
                 </ul>
               </div>
 

@@ -10,7 +10,8 @@ const UserDashboard = () => {
     carType: ''
   });
 
-  const services = ['Lavado Premium', 'Ceramic Coating', 'Detallado Motor', 'Express Polish'];
+  const services = ['lavado ultra con tratamiento', 'lavadotop con combo', 'audio', 'autodecoracion', 'viseras y calcas personalizadas'];
+
   const times = ['09:00 AM', '10:30 AM', '01:00 PM', '02:30 PM', '04:00 PM'];
 
   const handleBooking = (e) => {

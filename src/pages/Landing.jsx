@@ -19,49 +19,51 @@ const Landing = () => {
 
   const serviceCategories = [
     {
+      id: 'servicios',
+      title: 'Servicios',
+      icon: <Car />,
+      image: '/motor.png',
+      items: [
+        { name: 'autodecoracion' },
+        { name: 'alerones' },
+        { name: 'lips' },
+        { name: 'difusores' },
+        { name: 'viseras y calcas personalizadas' },
+        { name: 'aros' },
+        { name: 'accesorios extras' },
+        { name: 'otros' },
+      ]
+    },
+    {
       id: 'detallado',
-      title: 'Detallado Automotriz',
+      title: 'Detallados Automotris',
       icon: <Droplets />,
       image: '/lavado.png',
       items: [
-        { name: 'Lavado Ultra con Tratamiento', price: '$35' },
-        { name: 'Lavado Top con Combo', price: '$25' },
-        { name: 'Lavado Aspirado y Encerado con Combo', price: '$18' },
-        { name: 'Lavado Encerado y Aspirado', price: '$12' },
-        { name: 'Lavado por Fuera Rápido', price: '$5' },
+        { name: 'lavado ultra con tratamiento', price: '$35' },
+        { name: 'lavadotop con combo', price: '$25' },
+        { name: 'lavado aspirado y encerado con combo', price: '$18' },
+        { name: 'lavado encerado y aspirado', price: '$12' },
+        { name: 'lavado por fuera rapido', price: '$5' },
       ]
     },
     {
       id: 'audio',
-      title: 'Audio Profesional',
+      title: 'Audio',
       icon: <Volume2 />,
-      image: '/ceramic.png', // Reusing images for now or I can just use colors
+      image: '/ceramic.png',
       items: [
-        { name: 'Tweeters' },
-        { name: 'Parlantes' },
-        { name: 'Medios' },
-        { name: 'Bajo Amplificado' },
-        { name: 'Bajo' },
-        { name: 'Plantas' },
-        { name: 'Otros' },
-      ]
-    },
-    {
-      id: 'decoracion',
-      title: 'Autodecoración',
-      icon: <Car />,
-      image: '/motor.png',
-      items: [
-        { name: 'Alerones' },
-        { name: 'Lips' },
-        { name: 'Difusores' },
-        { name: 'Viseras y Calcas Personalizadas' },
-        { name: 'Aros' },
-        { name: 'Accesorios Extras' },
-        { name: 'Otros' },
+        { name: 'tweters' },
+        { name: 'parlantes' },
+        { name: 'medios' },
+        { name: 'bajo amplificado' },
+        { name: 'bajo' },
+        { name: 'plantas' },
+        { name: 'otros' },
       ]
     }
   ];
+
 
 
   return (

@@ -11,10 +11,11 @@ const AdminDashboard = () => {
   ];
 
   const appointments = [
-    { id: 1, user: 'Juan Perez', service: 'Lavado Premium', status: 'Pendiente', time: '10:30 AM' },
-    { id: 2, user: 'Maria Garcia', service: 'Ceramic Coating', status: 'En Proceso', time: '11:00 AM' },
-    { id: 3, user: 'Carlos Ruiz', service: 'Express Polish', status: 'Completado', time: '09:00 AM' },
-    { id: 4, user: 'Ana Lopez', service: 'Detallado Motor', status: 'Pendiente', time: '02:00 PM' },
+    { id: 1, user: 'Juan Perez', service: 'lavado ultra con tratamiento', status: 'Pendiente', time: '10:30 AM' },
+    { id: 2, user: 'Maria Garcia', service: 'parlantes', status: 'En Proceso', time: '11:00 AM' },
+    { id: 3, user: 'Carlos Ruiz', service: 'alerones', status: 'Completado', time: '09:00 AM' },
+    { id: 4, user: 'Ana Lopez', service: 'lavadotop con combo', status: 'Pendiente', time: '02:00 PM' },
+
   ];
 
   return (
