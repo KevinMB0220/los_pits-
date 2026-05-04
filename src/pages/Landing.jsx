@@ -103,34 +103,41 @@ const Landing = () => {
             <h2>Tratamientos de <span className="text-red">Lujo</span></h2>
           </div>
           
-          <div className="floating-cards-grid">
+          <div className="premium-services-grid">
             {serviceCategories.map((cat, i) => (
-              <div key={cat.id} className="floating-card reveal" style={{ transitionDelay: `${i * 100}ms` }}>
-                <div className="card-image-wrap">
-                  <img src={cat.image} alt={cat.title} />
-                  <div className="card-icon-overlay">{cat.icon}</div>
-                </div>
-                <div className="card-body">
-                  <div className="card-header">
-                    <h3>{cat.title}</h3>
+              <div key={cat.id} className="premium-service-card reveal" style={{ transitionDelay: `${i * 150}ms` }}>
+                <div className="psc-image-container">
+                  <img src={cat.image} alt={cat.title} className="psc-bg-image" />
+                  <div className="psc-overlay">
+                    <div className="psc-icon-box">{cat.icon}</div>
                   </div>
-                  <ul className="card-features service-list-official">
+                </div>
+                
+                <div className="psc-content">
+                  <h3 className="psc-title">{cat.title}</h3>
+                  <div className="psc-divider"></div>
+                  
+                  <ul className={`psc-list ${cat.items.length > 5 ? 'two-columns' : ''}`}>
                     {cat.items.map((item, idx) => (
-                      <li key={idx}>
-                        <div className="service-item-row">
-                          <span><CheckCircle2 size={16} className="text-red" /> {item.name}</span>
-                          {item.price && <span className="item-price-tag">{item.price}</span>}
-                        </div>
+                      <li key={idx} className="psc-item">
+                        <CheckCircle2 size={14} className="psc-check" />
+                        <span className="psc-item-name">{item.name}</span>
+                        {item.price && <span className="psc-price">{item.price}</span>}
                       </li>
                     ))}
                   </ul>
-                  <Link to="/login" className="card-cta">
-                    Solicitar Info <ArrowRight size={16} />
-                  </Link>
+                  
+                  <div className="psc-footer">
+                    <Link to="/login" className="psc-btn">
+                      <span>Agendar Cita</span>
+                      <ArrowRight size={16} />
+                    </Link>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
+
 
         </div>
       </section>
@@ -215,61 +222,176 @@ const Landing = () => {
         .hero-action-group { display: flex; align-items: center; gap: 40px; flex-wrap: wrap; }
         .hero-stats-mini strong { font-size: 1.5rem; display: block; }
         
-        /* Floating Cards Section */
-        .services-section { padding: 80px 0; background: #080808; position: relative; }
-        .floating-cards-grid {
+        /* Premium Service Cards */
+        .premium-services-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-          gap: 40px;
+          grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+          gap: 30px;
+          padding: 40px 0;
         }
-        .floating-card {
-          background: var(--surface);
-          border-radius: 32px;
+
+        .premium-service-card {
+          background: rgba(15, 15, 15, 0.7);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.05);
+          border-radius: 40px;
           overflow: hidden;
-          transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-          border: 1px solid var(--border);
+          transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+          position: relative;
           display: flex;
           flex-direction: column;
         }
-        .floating-card:hover {
-          transform: translateY(-20px);
+
+        .premium-service-card:hover {
+          transform: translateY(-15px);
           border-color: var(--primary);
-          box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 20px rgba(230,0,0,0.1);
+          box-shadow: 0 40px 80px rgba(0,0,0,0.6), 0 0 30px rgba(230,0,0,0.15);
         }
-        .card-image-wrap {
-          height: 240px;
+
+        .psc-image-container {
+          height: 220px;
           position: relative;
           overflow: hidden;
         }
-        .card-image-wrap img {
+
+        .psc-bg-image {
           width: 100%;
           height: 100%;
           object-fit: cover;
-          transition: transform 0.8s ease;
+          transition: transform 1.2s ease;
+          filter: brightness(0.6) contrast(1.2);
         }
-        .floating-card:hover .card-image-wrap img { transform: scale(1.1); }
-        .card-icon-overlay {
+
+        .premium-service-card:hover .psc-bg-image {
+          transform: scale(1.15);
+          filter: brightness(0.8) contrast(1.3);
+        }
+
+        .psc-overlay {
           position: absolute;
-          bottom: 20px;
-          right: 20px;
+          inset: 0;
+          background: linear-gradient(to top, rgba(15,15,15,1) 0%, transparent 60%);
+          display: flex;
+          align-items: flex-end;
+          padding: 30px;
+        }
+
+        .psc-icon-box {
           background: var(--primary);
-          width: 50px;
-          height: 50px;
-          border-radius: 12px;
+          width: 56px;
+          height: 56px;
+          border-radius: 18px;
           display: flex;
           align-items: center;
           justify-content: center;
           color: white;
-          box-shadow: 0 10px 20px rgba(230,0,0,0.3);
+          box-shadow: 0 10px 25px rgba(230,0,0,0.4);
+          transform: translateY(10px);
+          transition: 0.4s;
         }
-        .card-body { padding: 35px; flex: 1; display: flex; flex-direction: column; }
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .card-header h3 { font-size: 1.5rem; }
-        .card-price { background: rgba(255,255,255,0.05); padding: 5px 15px; border-radius: 8px; font-weight: 800; color: var(--primary); }
-        .service-list-official { margin-top: 10px; margin-bottom: 20px !important; }
-        .service-item-row { display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 10px; }
-        .item-price-tag { color: var(--primary); font-weight: 800; font-size: 1rem; }
-        .card-desc { font-size: 0.95rem; margin-bottom: 25px; line-height: 1.6; min-height: 70px; }
+
+        .premium-service-card:hover .psc-icon-box {
+          transform: translateY(0) scale(1.1);
+        }
+
+        .psc-content {
+          padding: 30px;
+          padding-top: 10px;
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+        }
+
+        .psc-title {
+          font-size: 1.8rem;
+          font-weight: 900;
+          letter-spacing: -0.5px;
+          margin-bottom: 15px;
+          text-transform: uppercase;
+        }
+
+        .psc-divider {
+          width: 40px;
+          height: 4px;
+          background: var(--primary);
+          border-radius: 2px;
+          margin-bottom: 25px;
+          transition: 0.4s;
+        }
+
+        .premium-service-card:hover .psc-divider {
+          width: 80px;
+        }
+
+        .psc-list {
+          list-style: none;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          margin-bottom: 35px;
+        }
+
+        .psc-list.two-columns {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 12px 20px;
+        }
+
+        .psc-item {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          font-size: 0.95rem;
+          color: #aaa;
+          transition: 0.3s;
+        }
+
+        .psc-item:hover {
+          color: white;
+        }
+
+        .psc-check {
+          color: var(--primary);
+          flex-shrink: 0;
+          opacity: 0.7;
+        }
+
+        .psc-item-name {
+          text-transform: capitalize;
+        }
+
+        .psc-price {
+          margin-left: auto;
+          font-weight: 800;
+          color: var(--primary);
+          font-size: 1rem;
+        }
+
+        .psc-footer {
+          margin-top: auto;
+        }
+
+        .psc-btn {
+          width: 100%;
+          background: rgba(255,255,255,0.03);
+          border: 1px solid rgba(255,255,255,0.08);
+          padding: 16px;
+          border-radius: 16px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 12px;
+          font-weight: 700;
+          color: white;
+          transition: 0.3s;
+        }
+
+        .psc-btn:hover {
+          background: white;
+          color: black;
+          border-color: white;
+        }
+
 
         .card-features { margin-bottom: 30px; }
         .card-features li { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 0.9rem; color: #ccc; }
