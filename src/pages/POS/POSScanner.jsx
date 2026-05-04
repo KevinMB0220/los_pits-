@@ -75,27 +75,41 @@ const POSScanner = () => {
   const startScanner = async () => {
     try {
       const { Html5Qrcode } = await import('html5-qrcode');
+      
+      // Ensure any existing instance is cleaned up
+      if (html5QrCodeRef.current) {
+        try { await html5QrCodeRef.current.stop(); } catch(e) {}
+      }
+
       const scanner = new Html5Qrcode('pos-qr-reader');
       html5QrCodeRef.current = scanner;
 
-      await scanner.start(
-        { facingMode: 'environment' },
-        {
-          fps: 10,
-          qrbox: { width: 280, height: 280 },
-          aspectRatio: 1.0,
+      const config = {
+        fps: 15,
+        qrbox: (viewfinderWidth, viewfinderHeight) => {
+          const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
+          const boxSize = Math.floor(minEdge * 0.7);
+          return { width: boxSize, height: boxSize };
         },
+        aspectRatio: 1.0,
+      };
+
+      // Try starting with environment (back) camera
+      await scanner.start(
+        { facingMode: "environment" },
+        config,
         (decodedText) => {
           handleBarcodeScanned(decodedText);
+          // Optional: sound feedback here
         },
-        (errorMessage) => {
-          // Ignore scan errors
-        }
+        () => {} // Ignore errors
       );
+      
       setScanning(true);
     } catch (err) {
       console.error('Scanner error:', err);
-      showNotif('No se pudo acceder a la cámara. Usa el código manual.', 'error');
+      showNotif('No se pudo abrir la cámara trasera. Verifica los permisos.', 'error');
+      setScanning(false);
     }
   };
 
