@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Shield, Zap, Droplets, Clock, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Shield, Zap, Droplets, Volume2, ArrowRight, CheckCircle2, Car } from 'lucide-react';
+
 
 const Landing = () => {
   useEffect(() => {
@@ -16,44 +17,52 @@ const Landing = () => {
     return () => observer.disconnect();
   }, []);
 
-  const services = [
-    { 
-      id: 'wash',
+  const serviceCategories = [
+    {
+      id: 'detallado',
+      title: 'Detallado Automotriz',
+      icon: <Droplets />,
       image: '/lavado.png',
-      icon: <Droplets />, 
-      title: 'Lavado Ultra Premium', 
-      desc: 'No es solo agua y jabón. Utilizamos un sistema de tres cubetas, pre-lavado con espuma activa y descontaminado químico para asegurar que ni una sola partícula ralle tu pintura.',
-      details: ['Tratamiento de llantas y rines', 'Secado con aire comprimido', 'Encerrado de cortesía'],
-      price: '$25'
+      items: [
+        { name: 'Lavado Ultra con Tratamiento', price: '$35' },
+        { name: 'Lavado Top con Combo', price: '$25' },
+        { name: 'Lavado Aspirado y Encerado con Combo', price: '$18' },
+        { name: 'Lavado Encerado y Aspirado', price: '$12' },
+        { name: 'Lavado por Fuera Rápido', price: '$5' },
+      ]
     },
-    { 
-      id: 'ceramic',
-      image: '/ceramic.png',
-      icon: <Shield />, 
-      title: 'Protección Cerámica', 
-      desc: 'La armadura definitiva para tu vehículo. Crea una capa de cristal líquido que protege contra rayos UV, lluvia ácida y rayones ligeros hasta por 3 años.',
-      details: ['Dureza 9H certificada', 'Efecto ultra-hidrofóbico', 'Garantía por escrito'],
-      price: '$199'
+    {
+      id: 'audio',
+      title: 'Audio Profesional',
+      icon: <Volume2 />,
+      image: '/ceramic.png', // Reusing images for now or I can just use colors
+      items: [
+        { name: 'Tweeters' },
+        { name: 'Parlantes' },
+        { name: 'Medios' },
+        { name: 'Bajo Amplificado' },
+        { name: 'Bajo' },
+        { name: 'Plantas' },
+        { name: 'Otros' },
+      ]
     },
-    { 
-      id: 'motor',
+    {
+      id: 'decoracion',
+      title: 'Autodecoración',
+      icon: <Car />,
       image: '/motor.png',
-      icon: <Zap />, 
-      title: 'Detallado de Motor', 
-      desc: 'Limpieza profunda del corazón de tu auto. Eliminamos grasa y suciedad acumulada usando vapor seco, protegiendo todos los componentes electrónicos.',
-      details: ['Hidratación de plásticos', 'Protección anticorrosiva', 'Acabado de fábrica'],
-      price: '$55'
-    },
-    { 
-      id: 'polish',
-      image: '/pulido.png',
-      icon: <Clock />, 
-      title: 'Corrección de Pintura', 
-      desc: 'Restauramos el brillo espejo eliminando el 90% de los defectos. Usamos pulidoras orbitales y compuestos de corte fino para un acabado perfecto sin hologramas.',
-      details: ['Eliminación de "swirls"', 'Nivelación de barniz', 'Sellado acrílico'],
-      price: '$85'
+      items: [
+        { name: 'Alerones' },
+        { name: 'Lips' },
+        { name: 'Difusores' },
+        { name: 'Viseras y Calcas Personalizadas' },
+        { name: 'Aros' },
+        { name: 'Accesorios Extras' },
+        { name: 'Otros' },
+      ]
     }
   ];
+
 
   return (
     <div className="landing-page">
@@ -93,30 +102,34 @@ const Landing = () => {
           </div>
           
           <div className="floating-cards-grid">
-            {services.map((s, i) => (
-              <div key={s.id} className="floating-card reveal" style={{ transitionDelay: `${i * 100}ms` }}>
+            {serviceCategories.map((cat, i) => (
+              <div key={cat.id} className="floating-card reveal" style={{ transitionDelay: `${i * 100}ms` }}>
                 <div className="card-image-wrap">
-                  <img src={s.image} alt={s.title} />
-                  <div className="card-icon-overlay">{s.icon}</div>
+                  <img src={cat.image} alt={cat.title} />
+                  <div className="card-icon-overlay">{cat.icon}</div>
                 </div>
                 <div className="card-body">
                   <div className="card-header">
-                    <h3>{s.title}</h3>
-                    <span className="card-price">{s.price}</span>
+                    <h3>{cat.title}</h3>
                   </div>
-                  <p className="card-desc">{s.desc}</p>
-                  <ul className="card-features">
-                    {s.details.map((d, idx) => (
-                      <li key={idx}><CheckCircle2 size={16} className="text-red" /> {d}</li>
+                  <ul className="card-features service-list-official">
+                    {cat.items.map((item, idx) => (
+                      <li key={idx}>
+                        <div className="service-item-row">
+                          <span><CheckCircle2 size={16} className="text-red" /> {item.name}</span>
+                          {item.price && <span className="item-price-tag">{item.price}</span>}
+                        </div>
+                      </li>
                     ))}
                   </ul>
                   <Link to="/login" className="card-cta">
-                    Reservar Servicio <ArrowRight size={16} />
+                    Solicitar Info <ArrowRight size={16} />
                   </Link>
                 </div>
               </div>
             ))}
           </div>
+
         </div>
       </section>
 
@@ -251,7 +264,11 @@ const Landing = () => {
         .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .card-header h3 { font-size: 1.5rem; }
         .card-price { background: rgba(255,255,255,0.05); padding: 5px 15px; border-radius: 8px; font-weight: 800; color: var(--primary); }
+        .service-list-official { margin-top: 10px; margin-bottom: 20px !important; }
+        .service-item-row { display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 10px; }
+        .item-price-tag { color: var(--primary); font-weight: 800; font-size: 1rem; }
         .card-desc { font-size: 0.95rem; margin-bottom: 25px; line-height: 1.6; min-height: 70px; }
+
         .card-features { margin-bottom: 30px; }
         .card-features li { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 0.9rem; color: #ccc; }
         .card-cta { margin-top: auto; display: flex; align-items: center; gap: 10px; font-weight: 700; color: white; transition: 0.3s; }
