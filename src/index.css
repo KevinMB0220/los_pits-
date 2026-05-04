@@ -35,6 +35,16 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* App Layout */
+.app-shell {
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--background); }

@@ -2,86 +2,90 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Car, Globe, Share2, X, Phone, Mail, MapPin, ArrowRight } from 'lucide-react';
 
-const Footer = () => {
+const Footer = ({ minimal = false }) => {
   return (
-    <footer className="footer-v3">
+    <footer className={`footer-v3 ${minimal ? 'footer-minimal' : ''}`}>
       {/* Background Texture */}
-      <div className="footer-pattern"></div>
+      {!minimal && <div className="footer-pattern"></div>}
       
       <div className="container">
-        {/* Newsletter / CTA Section */}
-        <div className="footer-cta reveal">
-          <div className="cta-content-v3">
-            <span className="badge-red">MEMBRESÍA VIP</span>
-            <h2>ÚNETE AL CLUB <span className="text-red">LOS PITS</span></h2>
-            <p>Recibe beneficios exclusivos, prioridad en citas y ofertas de temporada directamente en tu correo.</p>
-          </div>
-          <form className="cta-form-v3" onSubmit={(e) => e.preventDefault()}>
-            <input type="email" placeholder="Tu correo electrónico" />
-            <button type="submit">
-              UNIRSE <ArrowRight size={18} />
-            </button>
-          </form>
-        </div>
-
-        {/* Main Info Grid */}
-        <div className="footer-grid-v3">
-          {/* Brand Info */}
-          <div className="footer-col reveal">
-            <Link to="/" className="footer-logo-v3">
-              <Car size={32} fill="var(--primary)" />
-              <span>LOS PITS</span>
-            </Link>
-            <p className="footer-about">
-              Estableciendo el estándar de oro en estética automotriz. Pasión, precisión y perfección en cada detalle.
-            </p>
-            <div className="footer-social-v3">
-              <a href="#" aria-label="Website"><Globe size={20} /></a>
-              <a href="#" aria-label="Twitter"><X size={20} /></a>
-              <a href="#" aria-label="Share"><Share2 size={20} /></a>
+        {!minimal && (
+          <>
+            {/* Newsletter / CTA Section */}
+            <div className="footer-cta reveal">
+              <div className="cta-content-v3">
+                <span className="badge-red">MEMBRESÍA VIP</span>
+                <h2>ÚNETE AL CLUB <span className="text-red">LOS PITS</span></h2>
+                <p>Recibe beneficios exclusivos, prioridad en citas y ofertas de temporada directamente en tu correo.</p>
+              </div>
+              <form className="cta-form-v3" onSubmit={(e) => e.preventDefault()}>
+                <input type="email" placeholder="Tu correo electrónico" />
+                <button type="submit">
+                  UNIRSE <ArrowRight size={18} />
+                </button>
+              </form>
             </div>
-          </div>
 
-          {/* Links */}
-          <div className="footer-col reveal" style={{ transitionDelay: '100ms' }}>
-            <h3>SERVICIOS</h3>
-            <ul>
-              <li><Link to="/">Lavado Premium</Link></li>
-              <li><Link to="/">Ceramic Coating</Link></li>
-              <li><Link to="/">Detallado Motor</Link></li>
-              <li><Link to="/">Corrección de Pintura</Link></li>
-            </ul>
-          </div>
-
-          <div className="footer-col reveal" style={{ transitionDelay: '200ms' }}>
-            <h3>EMPRESA</h3>
-            <ul>
-              <li><Link to="/">Sobre Nosotros</Link></li>
-              <li><Link to="/booking">Reservar Cita</Link></li>
-              <li><Link to="/">Preguntas Frecuentes</Link></li>
-              <li><Link to="/">Contacto</Link></li>
-            </ul>
-          </div>
-
-          {/* Contact Info */}
-          <div className="footer-col reveal" style={{ transitionDelay: '300ms' }}>
-            <h3>CONTACTO</h3>
-            <div className="footer-contact-v3">
-              <div className="contact-item-v3">
-                <MapPin size={18} className="text-red" />
-                <span>San José, Costa Rica</span>
+            {/* Main Info Grid */}
+            <div className="footer-grid-v3">
+              {/* Brand Info */}
+              <div className="footer-col reveal">
+                <Link to="/" className="footer-logo-v3">
+                  <Car size={32} fill="var(--primary)" />
+                  <span>LOS PITS</span>
+                </Link>
+                <p className="footer-about">
+                  Estableciendo el estándar de oro en estética automotriz. Pasión, precisión y perfección en cada detalle.
+                </p>
+                <div className="footer-social-v3">
+                  <a href="#" aria-label="Website"><Globe size={20} /></a>
+                  <a href="#" aria-label="Twitter"><X size={20} /></a>
+                  <a href="#" aria-label="Share"><Share2 size={20} /></a>
+                </div>
               </div>
-              <div className="contact-item-v3">
-                <Phone size={18} className="text-red" />
-                <span>+506 1234-5678</span>
+
+              {/* Links */}
+              <div className="footer-col reveal" style={{ transitionDelay: '100ms' }}>
+                <h3>SERVICIOS</h3>
+                <ul>
+                  <li><Link to="/">Lavado Premium</Link></li>
+                  <li><Link to="/">Ceramic Coating</Link></li>
+                  <li><Link to="/">Detallado Motor</Link></li>
+                  <li><Link to="/">Corrección de Pintura</Link></li>
+                </ul>
               </div>
-              <div className="contact-item-v3">
-                <Mail size={18} className="text-red" />
-                <span>info@lospits.com</span>
+
+              <div className="footer-col reveal" style={{ transitionDelay: '200ms' }}>
+                <h3>EMPRESA</h3>
+                <ul>
+                  <li><Link to="/">Sobre Nosotros</Link></li>
+                  <li><Link to="/booking">Reservar Cita</Link></li>
+                  <li><Link to="/">Preguntas Frecuentes</Link></li>
+                  <li><Link to="/">Contacto</Link></li>
+                </ul>
+              </div>
+
+              {/* Contact Info */}
+              <div className="footer-col reveal" style={{ transitionDelay: '300ms' }}>
+                <h3>CONTACTO</h3>
+                <div className="footer-contact-v3">
+                  <div className="contact-item-v3">
+                    <MapPin size={18} className="text-red" />
+                    <span>San José, Costa Rica</span>
+                  </div>
+                  <div className="contact-item-v3">
+                    <Phone size={18} className="text-red" />
+                    <span>+506 1234-5678</span>
+                  </div>
+                  <div className="contact-item-v3">
+                    <Mail size={18} className="text-red" />
+                    <span>info@lospits.com</span>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
+          </>
+        )}
 
         {/* Copyright Bar */}
         <div className="footer-bottom-v3">
@@ -97,18 +101,28 @@ const Footer = () => {
       <style dangerouslySetInnerHTML={{ __html: `
         .footer-v3 {
           background-color: #030303;
-          padding: 100px 0 50px;
+          padding: 30px 0 30px;
           position: relative;
           border-top: 1px solid rgba(255, 255, 255, 0.05);
           color: white;
           overflow: hidden;
         }
 
+        .footer-minimal {
+          padding: 20px 0;
+          background: #000;
+        }
+
+        .footer-minimal .footer-bottom-v3 {
+          border-top: none;
+          padding-top: 0;
+        }
+
         .footer-pattern {
           position: absolute;
           inset: 0;
           background: url('/pattern.png') repeat;
-          opacity: 0.15;
+          opacity: 0.1;
           pointer-events: none;
         }
 
@@ -116,9 +130,9 @@ const Footer = () => {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding-bottom: 80px;
+          padding-bottom: 30px;
           border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-          margin-bottom: 80px;
+          margin-bottom: 30px;
           gap: 40px;
         }
 
@@ -151,8 +165,8 @@ const Footer = () => {
         .footer-grid-v3 {
           display: grid;
           grid-template-columns: 2fr 1fr 1fr 1.5fr;
-          gap: 60px;
-          margin-bottom: 80px;
+          gap: 40px;
+          margin-bottom: 40px;
         }
 
         .footer-logo-v3 {

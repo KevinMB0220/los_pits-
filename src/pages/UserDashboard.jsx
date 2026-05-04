@@ -116,7 +116,7 @@ const UserDashboard = () => {
       </div>
 
       <style dangerouslySetInnerHTML={{ __html: `
-        .dashboard { padding: 60px 0; min-height: 100vh; background: #050505; }
+        .dashboard { padding: 60px 0; background: #050505; }
         .dashboard-header { margin-bottom: 50px; text-align: center; }
         .dashboard-header h1 { font-size: 3rem; margin-bottom: 10px; }
 

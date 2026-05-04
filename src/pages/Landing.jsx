@@ -201,7 +201,7 @@ const Landing = () => {
         .hero-stats-mini strong { font-size: 1.5rem; display: block; }
         
         /* Floating Cards Section */
-        .services-section { padding: 150px 0; background: #080808; position: relative; }
+        .services-section { padding: 80px 0; background: #080808; position: relative; }
         .floating-cards-grid {
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -258,7 +258,7 @@ const Landing = () => {
         .card-cta:hover { color: var(--primary); padding-left: 10px; }
 
         /* Why Us Section */
-        .why-us { padding: 150px 0; background: #000; }
+        .why-us { padding: 80px 0; background: #000; }
         .why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 100px; align-items: center; }
         .why-features { margin-top: 50px; display: grid; gap: 30px; }
         .why-item { display: flex; gap: 20px; }
