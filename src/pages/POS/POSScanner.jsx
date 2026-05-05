@@ -76,42 +76,60 @@ const POSScanner = () => {
     try {
       const { Html5Qrcode } = await import('html5-qrcode');
       
-      // Ensure any existing instance is cleaned up
+      // Cleanup previous instance
       if (html5QrCodeRef.current) {
-        try { await html5QrCodeRef.current.stop(); } catch(e) {}
+        try { 
+          await html5QrCodeRef.current.stop();
+        } catch(e) {}
       }
 
+      // Ensure container is empty
+      const container = document.getElementById('pos-qr-reader');
+      if (container) container.innerHTML = "";
+
+      // Small delay for DOM
+      await new Promise(r => setTimeout(r, 300));
+      
       const scanner = new Html5Qrcode('pos-qr-reader');
       html5QrCodeRef.current = scanner;
 
       const config = {
-        fps: 15,
+        fps: 20,
         qrbox: (viewfinderWidth, viewfinderHeight) => {
           const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
-          const boxSize = Math.floor(minEdge * 0.7);
+          const boxSize = Math.floor(minEdge * 0.8);
           return { width: boxSize, height: boxSize };
         },
         aspectRatio: 1.0,
       };
 
-      // Try starting with environment (back) camera
-      await scanner.start(
-        { facingMode: "environment" },
-        config,
-        (decodedText) => {
-          handleBarcodeScanned(decodedText);
-          // Optional: sound feedback here
-        },
-        () => {} // Ignore errors
-      );
+      // Try environment camera first, then fall back to ANY camera
+      try {
+        await scanner.start(
+          { facingMode: "environment" },
+          config,
+          (decodedText) => handleBarcodeScanned(decodedText),
+          () => {}
+        );
+      } catch (err) {
+        console.warn("Environment camera failed, trying any camera:", err);
+        await scanner.start(
+          { facingMode: "user" },
+          config,
+          (decodedText) => handleBarcodeScanned(decodedText),
+          () => {}
+        );
+      }
       
       setScanning(true);
     } catch (err) {
-      console.error('Scanner error:', err);
-      showNotif('No se pudo abrir la cámara trasera. Verifica los permisos.', 'error');
+      console.error('Final scanner error:', err);
+      showNotif('No se pudo abrir la cámara. Verifica los permisos.', 'error');
       setScanning(false);
     }
   };
+
+
 
   const stopScanner = async () => {
     if (html5QrCodeRef.current) {
