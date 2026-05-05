@@ -1645,6 +1645,19 @@ body {
     border-radius: 24px;
     overflow: hidden;
     border: 2px solid var(--pos-border);
+    position: relative;
+  }
+
+  /* Ensure injected video and canvas are visible and fill the area */
+  #pos-qr-reader video {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    border-radius: 20px;
+  }
+
+  #pos-qr-reader canvas {
+    display: none !important; /* Hide the internal canvas if it overlaps */
   }
 
   .scanner-placeholder {
@@ -1654,7 +1667,11 @@ body {
     align-items: center;
     justify-content: center;
     background: #080808 !important;
+    z-index: 1;
+    position: absolute;
+    inset: 0;
   }
+
   
   .scanner-placeholder svg {
     color: rgba(255,255,255,0.05) !important;
