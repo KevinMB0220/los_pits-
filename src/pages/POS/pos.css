@@ -1412,6 +1412,11 @@ body {
   gap: 20px;
 }
 
+.pos-mobile-toggle {
+  display: none;
+}
+
+
 .product-mini-card {
   display: flex;
   align-items: center;
