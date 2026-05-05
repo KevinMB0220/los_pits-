@@ -76,19 +76,14 @@ const POSScanner = () => {
     try {
       const { Html5Qrcode } = await import('html5-qrcode');
       
-      // Cleanup previous instance
       if (html5QrCodeRef.current) {
-        try { 
-          await html5QrCodeRef.current.stop();
-        } catch(e) {}
+        try { await html5QrCodeRef.current.stop(); } catch(e) {}
       }
 
-      // Ensure container is empty
       const container = document.getElementById('pos-qr-reader');
       if (container) container.innerHTML = "";
 
-      // Small delay for DOM
-      await new Promise(r => setTimeout(r, 300));
+      await new Promise(r => setTimeout(r, 200));
       
       const scanner = new Html5Qrcode('pos-qr-reader');
       html5QrCodeRef.current = scanner;
@@ -103,7 +98,8 @@ const POSScanner = () => {
         aspectRatio: 1.0,
       };
 
-      // Try environment camera first, then fall back to ANY camera
+      setScanning(true); 
+      
       try {
         await scanner.start(
           { facingMode: "environment" },
@@ -112,16 +108,14 @@ const POSScanner = () => {
           () => {}
         );
       } catch (err) {
+        if (err?.name === 'AbortError') return;
         console.warn("Environment camera failed, trying any camera:", err);
-        await scanner.start(
-          { facingMode: "user" },
-          config,
-          (decodedText) => handleBarcodeScanned(decodedText),
-          () => {}
-        );
+        try {
+          await scanner.start({ facingMode: "user" }, config, (text) => handleBarcodeScanned(text), () => {});
+        } catch (err2) {
+          if (err2?.name !== 'AbortError') throw err2;
+        }
       }
-      
-      setScanning(true);
     } catch (err) {
       console.error('Final scanner error:', err);
       showNotif('No se pudo abrir la cámara. Verifica los permisos.', 'error');
@@ -129,18 +123,20 @@ const POSScanner = () => {
     }
   };
 
-
-
   const stopScanner = async () => {
-    if (html5QrCodeRef.current) {
-      try {
+    try {
+      if (html5QrCodeRef.current) {
         await html5QrCodeRef.current.stop();
-        html5QrCodeRef.current.clear();
-      } catch (e) {}
-      html5QrCodeRef.current = null;
+        html5QrCodeRef.current = null;
+      }
+    } catch (e) {
+    } finally {
+      setScanning(false);
+      const container = document.getElementById('pos-qr-reader');
+      if (container) container.innerHTML = "";
     }
-    setScanning(false);
   };
+
 
   useEffect(() => {
     return () => {
@@ -231,16 +227,16 @@ const POSScanner = () => {
 
             <div className="scanner-area-container">
               <div className="scanner-area">
-                <div id="pos-qr-reader" ref={scannerRef} className={scanning ? 'scanner-active' : 'scanner-inactive'}>
-                  {!scanning && (
-                    <div className="scanner-placeholder">
-                      <ScanBarcode size={48} />
-                      <p>Cámara Desactivada</p>
-                    </div>
-                  )}
-                </div>
+                <div id="pos-qr-reader" className="scanner-video-box"></div>
+                {!scanning && (
+                  <div className="scanner-placeholder">
+                    <ScanBarcode size={48} />
+                    <p>Cámara Desactivada</p>
+                  </div>
+                )}
               </div>
             </div>
+
 
             <form className="manual-code-form mobile-stack" onSubmit={handleManualSearch}>
               <input
