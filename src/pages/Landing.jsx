@@ -20,11 +20,10 @@ const Landing = () => {
   const serviceCategories = [
     {
       id: 'servicios',
-      title: 'Servicios',
+      title: 'Autodecoracion',
       icon: <Car />,
       image: '/motor.png',
       items: [
-        { name: 'autodecoracion' },
         { name: 'alerones' },
         { name: 'lips' },
         { name: 'difusores' },
