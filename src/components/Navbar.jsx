@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../App';
-import { Menu, X, Car, LogOut, ArrowRight, User, Globe, Share2, Layout } from 'lucide-react';
+import { Menu, X, LogOut, ArrowRight, User, Globe, Share2, Layout } from 'lucide-react';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -39,7 +39,7 @@ const Navbar = () => {
       <div className="container nav-container">
         <Link to="/" className="logo">
           <div className="logo-box">
-            <Car size={22} fill="currentColor" />
+            <span className="logo-lp">LP</span>
           </div>
           <span className="logo-text">LOS <span className="red">PITS</span></span>
         </Link>
@@ -167,6 +167,13 @@ const Navbar = () => {
           align-items: center;
           justify-content: center;
           box-shadow: 0 8px 16px rgba(230, 0, 0, 0.2);
+        }
+        .logo-lp {
+          font-weight: 900;
+          font-size: 1.2rem;
+          font-style: italic;
+          color: white;
+          letter-spacing: -1px;
         }
         .logo-text {
           font-weight: 900;
