@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Car, Globe, Share2, X, Phone, Mail, MapPin, ArrowRight } from 'lucide-react';
+import { Globe, Share2, X, Phone, Mail, MapPin, ArrowRight } from 'lucide-react';
 
 const Footer = ({ minimal = false }) => {
   return (
@@ -31,7 +31,9 @@ const Footer = ({ minimal = false }) => {
               {/* Brand Info */}
               <div className="footer-col reveal">
                 <Link to="/" className="footer-logo-v3">
-                  <Car size={32} fill="var(--primary)" />
+                  <div className="footer-logo-box">
+                    <span className="logo-lp-footer">LP</span>
+                  </div>
                   <span>LOS PITS</span>
                 </Link>
                 <p className="footer-about">
@@ -179,6 +181,23 @@ const Footer = ({ minimal = false }) => {
           margin-bottom: 25px;
           text-decoration: none;
           color: white;
+        }
+        .footer-logo-box {
+          width: 48px;
+          height: 48px;
+          background: var(--primary);
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 8px 16px rgba(230, 0, 0, 0.2);
+        }
+        .logo-lp-footer {
+          font-weight: 900;
+          font-size: 1.5rem;
+          font-style: italic;
+          color: white;
+          letter-spacing: -1px;
         }
 
         .footer-about { color: #888; line-height: 1.6; margin-bottom: 30px; max-width: 300px; }
