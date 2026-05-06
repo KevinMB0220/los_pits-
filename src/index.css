@@ -35,14 +35,27 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* App Layout */
 .app-shell {
   display: flex;
   flex-direction: column;
+  position: relative;
+}
+
+.global-pattern-overlay {
+  position: fixed;
+  inset: 0;
+  background-image: 
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.05) 0px, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 12px),
+    repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.03) 0px, rgba(255, 255, 255, 0.03) 1px, transparent 1px, transparent 12px);
+  pointer-events: none;
+  z-index: 1;
+  opacity: 1;
 }
 
 main {
   flex: 1;
+  position: relative;
+  z-index: 2;
 }
 
 /* Scrollbar */

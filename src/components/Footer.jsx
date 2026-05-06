@@ -5,9 +5,6 @@ import { Globe, Share2, X, Phone, Mail, MapPin, ArrowRight } from 'lucide-react'
 const Footer = ({ minimal = false }) => {
   return (
     <footer className={`footer-v3 ${minimal ? 'footer-minimal' : ''}`}>
-      {/* Background Texture */}
-      {!minimal && <div className="footer-pattern"></div>}
-      
       <div className="container">
         {!minimal && (
           <>
@@ -41,8 +38,6 @@ const Footer = ({ minimal = false }) => {
                 </p>
                 <div className="footer-social-v3">
                   <a href="#" aria-label="Website"><Globe size={20} /></a>
-                  <a href="#" aria-label="Twitter"><X size={20} /></a>
-                  <a href="#" aria-label="Share"><Share2 size={20} /></a>
                 </div>
               </div>
 
@@ -50,26 +45,25 @@ const Footer = ({ minimal = false }) => {
               <div className="footer-col reveal" style={{ transitionDelay: '100ms' }}>
                 <h3>SERVICIOS</h3>
                 <ul>
-                  <li><Link to="/">lavado ultra con tratamiento</Link></li>
-                  <li><Link to="/">audio</Link></li>
-                  <li><Link to="/">autodecoracion</Link></li>
-                  <li><Link to="/">viseras y calcas</Link></li>
-
+                  <li><Link to="/">Lavado Ultra con Tratamiento</Link></li>
+                  <li><Link to="/">Audio</Link></li>
+                  <li><Link to="/">Autodecoración</Link></li>
+                  <li><Link to="/">Viseras y Calcas</Link></li>
                 </ul>
               </div>
 
               <div className="footer-col reveal" style={{ transitionDelay: '200ms' }}>
                 <h3>EMPRESA</h3>
                 <ul>
-                  <li><Link to="/">Sobre Nosotros</Link></li>
-                  <li><Link to="/booking">Reservar Cita</Link></li>
-                  <li><Link to="/">Preguntas Frecuentes</Link></li>
-                  <li><Link to="/">Contacto</Link></li>
+                  <li><a href="/#sobre-nosotros">Sobre Nosotros</a></li>
+                  <li><Link to="/login">Reservar Cita</Link></li>
+                  <li><a href="#">Preguntas Frecuentes</a></li>
+                  <li><a href="#contacto">Contacto</a></li>
                 </ul>
               </div>
 
               {/* Contact Info */}
-              <div className="footer-col reveal" style={{ transitionDelay: '300ms' }}>
+              <div id="contacto" className="footer-col reveal" style={{ transitionDelay: '300ms' }}>
                 <h3>CONTACTO</h3>
                 <div className="footer-contact-v3">
                   <div className="contact-item-v3">
@@ -94,9 +88,8 @@ const Footer = ({ minimal = false }) => {
         <div className="footer-bottom-v3">
           <p>&copy; {new Date().getFullYear()} LOS PITS • Todos los derechos reservados.</p>
           <div className="footer-legal">
-            <a href="#">Privacidad</a>
-            <a href="#">Términos</a>
-            <a href="#">Soporte</a>
+            <Link to="/legal/privacy">Privacidad</Link>
+            <Link to="/legal/terms">Términos</Link>
           </div>
         </div>
       </div>
@@ -111,6 +104,19 @@ const Footer = ({ minimal = false }) => {
           overflow: hidden;
         }
 
+        .badge-red {
+          display: block;
+          color: var(--primary);
+          font-weight: 800;
+          font-size: 0.7rem;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+          margin-bottom: 12px;
+          border: none;
+          background: none;
+          padding: 0;
+        }
+
         .footer-minimal {
           padding: 20px 0;
           background: #000;
@@ -119,14 +125,6 @@ const Footer = ({ minimal = false }) => {
         .footer-minimal .footer-bottom-v3 {
           border-top: none;
           padding-top: 0;
-        }
-
-        .footer-pattern {
-          position: absolute;
-          inset: 0;
-          background: url('/pattern.png') repeat;
-          opacity: 0.1;
-          pointer-events: none;
         }
 
         .footer-cta {

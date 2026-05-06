@@ -35,15 +35,15 @@ const Landing = () => {
     },
     {
       id: 'detallado',
-      title: 'Detallados Automotris',
+      title: 'Detallado Automotriz',
       icon: <Droplets />,
       image: '/lavado.png',
       items: [
-        { name: 'lavado ultra con tratamiento', price: '$35' },
-        { name: 'lavadotop con combo', price: '$25' },
-        { name: 'lavado aspirado y encerado con combo', price: '$18' },
-        { name: 'lavado encerado y aspirado', price: '$12' },
-        { name: 'lavado por fuera rapido', price: '$5' },
+        { name: 'Lavado Ultra con Tratamiento' },
+        { name: 'Lavado Top con Combo' },
+        { name: 'Lavado Aspirado y Encerado' },
+        { name: 'Lavado Premium' },
+        { name: 'Lavado Express' },
       ]
     },
     {
@@ -78,23 +78,19 @@ const Landing = () => {
         
         <div className="container hero-layout">
           <div className="hero-text-side reveal">
-            <span className="badge-red">Estética Automotriz de Élite</span>
-            <h1>EL ARTE DEL <span className="text-red">DETALLADO</span></h1>
-            <p>En Los Pits, no lavamos autos, restauramos la pasión por conducir. Experimenta el nivel de detalle que solo los verdaderos expertos pueden ofrecer.</p>
-            <div className="hero-action-group">
-              <Link to="/login" className="btn-primary">
+            <span className="badge-red hero-badge-anim">Estética Automotriz de Élite</span>
+            <h1 className="hero-title-anim">EL ARTE DEL <span className="text-red">DETALLADO</span></h1>
+            <p className="hero-p-anim">En Los Pits, no lavamos autos, restauramos la pasión por conducir. Experimenta el nivel de detalle que solo los verdaderos expertos pueden ofrecer.</p>
+            <div className="hero-action-group reveal" style={{ transitionDelay: '300ms' }}>
+              <Link to="/login" className="btn-primary hero-btn-glow">
                 Agendar Mi Cita <ArrowRight size={20} />
               </Link>
-              <div className="hero-stats-mini">
-                <div><strong>5.0</strong> <span className="text-red">★★★★★</span></div>
-                <p>Basado en 500+ reseñas</p>
-              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Services Section - Redesigned */}
+      {/* Services Section */}
       <section id="servicios" className="services-section">
         <div className="container">
           <div className="section-title-group reveal">
@@ -121,7 +117,6 @@ const Landing = () => {
                       <li key={idx} className="psc-item">
                         <CheckCircle2 size={14} className="psc-check" />
                         <span className="psc-item-name">{item.name}</span>
-                        {item.price && <span className="psc-price">{item.price}</span>}
                       </li>
                     ))}
                   </ul>
@@ -136,13 +131,11 @@ const Landing = () => {
               </div>
             ))}
           </div>
-
-
         </div>
       </section>
 
       {/* Why Us Section */}
-      <section className="why-us">
+      <section id="sobre-nosotros" className="why-us">
         <div className="container why-grid">
           <div className="why-content reveal">
             <span className="badge-red">¿Por qué elegirnos?</span>
@@ -167,10 +160,6 @@ const Landing = () => {
             </div>
           </div>
           <div className="why-image-wrap reveal">
-            <div className="experience-badge">
-              <span>+10</span>
-              <p>Años Exp.</p>
-            </div>
             <img src="/hero.png" alt="Workshop" className="side-img" />
           </div>
         </div>
@@ -178,8 +167,19 @@ const Landing = () => {
 
       <style dangerouslySetInnerHTML={{ __html: `
         .text-red { color: var(--primary); }
-        
-        /* New Hero */
+        .badge-red {
+          display: block;
+          color: var(--primary);
+          font-weight: 800;
+          font-size: 0.75rem;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+          margin-bottom: 15px;
+          opacity: 0.8;
+          border: none;
+          background: none;
+          padding: 0;
+        }
         .hero {
           position: relative;
           min-height: 100vh;
@@ -220,6 +220,37 @@ const Landing = () => {
         .hero-text-side p { font-size: 1.3rem; max-width: 500px; margin-bottom: 40px; }
         .hero-action-group { display: flex; align-items: center; gap: 40px; flex-wrap: wrap; }
         .hero-stats-mini strong { font-size: 1.5rem; display: block; }
+
+        /* Hero Animations */
+        .hero-badge-anim { animation: fadeInDown 0.8s ease-out; }
+        .hero-title-anim { animation: fadeInLeft 1s ease-out 0.2s both; }
+        .hero-p-anim { animation: fadeInLeft 1s ease-out 0.4s both; }
+        .hero-btn-glow { position: relative; overflow: hidden; }
+        .hero-btn-glow::after {
+          content: '';
+          position: absolute;
+          top: -50%;
+          left: -50%;
+          width: 200%;
+          height: 200%;
+          background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+          transform: rotate(45deg);
+          animation: shine 3s infinite;
+        }
+
+        @keyframes fadeInDown {
+          from { opacity: 0; transform: translateY(-20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInLeft {
+          from { opacity: 0; transform: translateX(-30px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes shine {
+          0% { left: -100%; }
+          20% { left: 100%; }
+          100% { left: 100%; }
+        }
         
         /* Premium Service Cards */
         .premium-services-grid {
