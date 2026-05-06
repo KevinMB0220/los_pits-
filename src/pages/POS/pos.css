@@ -94,6 +94,13 @@ body {
   color: white;
 }
 
+.pos-logo-lp {
+  font-weight: 900;
+  font-size: 1.3rem;
+  font-style: italic;
+  letter-spacing: -1px;
+}
+
 .pos-logo-text {
   transition: opacity 0.3s, transform 0.3s;
 }

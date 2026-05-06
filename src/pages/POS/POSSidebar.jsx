@@ -8,7 +8,6 @@ import {
   FileText,
   ChevronLeft,
   ChevronRight,
-  Car,
   LogOut,
   ShoppingCart,
 } from 'lucide-react';
@@ -36,7 +35,7 @@ const POSSidebar = () => {
       <div className="pos-sidebar-header">
         <Link to="/" className="pos-logo">
           <div className="pos-logo-icon">
-            <Car size={20} fill="white" />
+            <span className="pos-logo-lp">LP</span>
           </div>
           {(!collapsed || isMobileMenuOpen) && (
             <div className="pos-logo-text">
