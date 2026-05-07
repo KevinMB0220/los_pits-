@@ -1,5 +1,6 @@
-import React, { useState, createContext, useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { AuthProvider } from './AuthContext';
+import { useAuth } from './useAuth';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Landing from './pages/Landing';
@@ -8,24 +9,27 @@ import UserDashboard from './pages/UserDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import POSLayout from './pages/POS/POSLayout';
 
-// Simple Auth Context
-const AuthContext = createContext(null);
-
-export const useAuth = () => useContext(AuthContext);
+import Privacy from './pages/Privacy';
+import Terms from './pages/Terms';
+import ScrollToTop from './components/ScrollToTop';
 
 const AppContent = () => {
   const { user } = useAuth();
   const location = useLocation();
   const isPOS = location.pathname.startsWith('/pos');
   const isMinimal = ['/login', '/admin'].includes(location.pathname);
+  const isLegal = ['/legal/privacy', '/legal/terms'].includes(location.pathname);
 
   return (
     <div className="app-shell">
-      {!isPOS && <Navbar />}
+      <div className="global-pattern-overlay"></div>
+      {!isPOS && !isLegal && <Navbar />}
       <main>
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/legal/privacy" element={<Privacy />} />
+          <Route path="/legal/terms" element={<Terms />} />
           
           {/* Protected User Route */}
           <Route 
@@ -52,23 +56,19 @@ const AppContent = () => {
           />
         </Routes>
       </main>
-      {!isPOS && <Footer minimal={isMinimal} />}
+      {!isPOS && <Footer minimal={isMinimal || isLegal} />}
     </div>
   );
 };
 
 const App = () => {
-  const [user, setUser] = useState(null); // { role: 'admin', name: 'Admin' }
-
-  const login = (userData) => setUser(userData);
-  const logout = () => setUser(null);
-
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthProvider>
       <Router>
+        <ScrollToTop />
         <AppContent />
       </Router>
-    </AuthContext.Provider>
+    </AuthProvider>
   );
 };
 

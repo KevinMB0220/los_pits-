@@ -1,29 +1,124 @@
-import React from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Users, Calendar, TrendingUp, DollarSign, Search, Filter, ShoppingBag } from 'lucide-react';
+import { Users, Calendar, TrendingUp, DollarSign, ShoppingBag } from 'lucide-react';
+import { supabase } from '../lib/supabase';
+
+import AppointmentsKanban from '../components/AppointmentsKanban';
+
+const SERVICE_PRICES = {
+  'Lavado Ultra con Tratamiento': 50,
+  'Audio': 250,
+  'Autodecoración': 180,
+  'Viseras y Calcas': 75
+};
 
 const AdminDashboard = () => {
-  const stats = [
-    { label: 'Citas Hoy', value: '12', icon: <Calendar />, color: '#e60000' },
-    { label: 'Clientes Nuevos', value: '48', icon: <Users />, color: '#00c853' },
-    { label: 'Ingresos Mes', value: '$3,450', icon: <DollarSign />, color: '#2979ff' },
-    { label: 'Crecimiento', value: '+15%', icon: <TrendingUp />, color: '#ff9100' },
-  ];
+  const [appointments, setAppointments] = useState([]);
+  const [filter, setFilter] = useState('today');
+  const [specificDate, setSpecificDate] = useState('');
+  const [loading, setLoading] = useState(true);
 
-  const appointments = [
-    { id: 1, user: 'Juan Perez', service: 'lavado ultra con tratamiento', status: 'Pendiente', time: '10:30 AM' },
-    { id: 2, user: 'Maria Garcia', service: 'parlantes', status: 'En Proceso', time: '11:00 AM' },
-    { id: 3, user: 'Carlos Ruiz', service: 'alerones', status: 'Completado', time: '09:00 AM' },
-    { id: 4, user: 'Ana Lopez', service: 'lavadotop con combo', status: 'Pendiente', time: '02:00 PM' },
+  // Cargar citas desde Supabase
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      if (!supabase) return;
+      try {
+        const { data, error } = await supabase
+          .from('appointments')
+          .select('*');
+        
+        if (error) throw error;
+        setAppointments(data || []);
+      } catch (err) {
+        console.error('Error al cargar citas:', err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  ];
+    fetchAppointments();
+  }, []);
+
+  // Función para actualizar estado en Supabase
+  const handleUpdateStatus = async (id, newStatus) => {
+    try {
+      const { error } = await supabase
+        .from('appointments')
+        .update({ status: newStatus })
+        .eq('id', id);
+      
+      if (error) throw error;
+      setAppointments(prev => prev.map(app => app.id === id ? { ...app, status: newStatus } : app));
+    } catch (err) {
+      console.error('Error al actualizar estado:', err.message);
+    }
+  };
+
+  // Función para agregar cita en Supabase
+  const handleAddAppointment = async (newApp) => {
+    try {
+      const { data, error } = await supabase
+        .from('appointments')
+        .insert([newApp])
+        .select();
+      
+      if (error) throw error;
+      setAppointments(prev => [...prev, ...(data || [])]);
+    } catch (err) {
+      console.error('Error al agregar cita:', err.message);
+    }
+  };
+
+  // Dinámicamente calcular las estadísticas
+  const stats = useMemo(() => {
+    const todayStr = new Date().toISOString().split('T')[0];
+    const currentMonthStr = todayStr.substring(0, 7);
+    
+    const todayAppointments = appointments.filter(a => a.date === todayStr);
+    const monthAppointments = appointments.filter(a => a.date && a.date.startsWith(currentMonthStr));
+    
+    const monthlyRevenue = monthAppointments.reduce((acc, curr) => {
+      if (['terminado', 'recogido'].includes(curr.status)) {
+        return acc + (SERVICE_PRICES[curr.service] || 0);
+      }
+      return acc;
+    }, 0);
+
+    const uniqueClientsMonth = new Set(monthAppointments.map(a => a.user)).size;
+    
+    let displayAppointmentsCount = todayAppointments.length;
+    let appointmentsLabel = 'Citas Hoy';
+    
+    if (filter === 'month') {
+      displayAppointmentsCount = monthAppointments.length;
+      appointmentsLabel = 'Citas Mes';
+    } else if (filter === 'specific' && specificDate) {
+      displayAppointmentsCount = appointments.filter(a => a.date === specificDate).length;
+      appointmentsLabel = `Citas (${specificDate})`;
+    }
+
+    return [
+      { label: appointmentsLabel, value: displayAppointmentsCount.toString(), icon: <Calendar />, color: '#e60000' },
+      { label: 'Clientes Mes', value: uniqueClientsMonth.toString(), icon: <Users />, color: '#00c853' },
+      { label: 'Ingresos Mes', value: `$${monthlyRevenue.toLocaleString()}`, icon: <DollarSign />, color: '#2979ff' },
+      { label: 'Crecimiento', value: '+18.5%', icon: <TrendingUp />, color: '#ff9100' },
+    ];
+  }, [appointments, filter, specificDate]);
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#050505', color: 'white' }}>
+        <p>Cargando datos del panel...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="admin-dashboard">
       <div className="container">
         <div className="admin-header-main">
           <div className="admin-title-area">
-            <span className="badge-red">Gestión de Negocio</span>
+            <span className="badge-red-typo">Gestión de Negocio</span>
             <h1>Panel Administrativo</h1>
             <p>Control central de operaciones Los Pits</p>
           </div>
@@ -53,58 +148,24 @@ const AdminDashboard = () => {
           ))}
         </div>
 
-        {/* Table Section */}
-        <div className="admin-content-section glass-card">
-          <div className="section-header">
-            <h3>Citas Recientes</h3>
-            <div className="actions">
-              <div className="search-box">
-                <Search size={18} />
-                <input type="text" placeholder="Buscar..." />
-              </div>
-              <button className="icon-btn"><Filter size={18} /></button>
-            </div>
-          </div>
-
-          <div className="table-responsive">
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Cliente</th>
-                  <th>Servicio</th>
-                  <th>Horario</th>
-                  <th>Estado</th>
-                  <th>Acción</th>
-                </tr>
-              </thead>
-              <tbody>
-                {appointments.map(app => (
-                  <tr key={app.id}>
-                    <td>#{app.id}</td>
-                    <td>{app.user}</td>
-                    <td>{app.service}</td>
-                    <td>{app.time}</td>
-                    <td>
-                      <span className={`badge ${app.status.toLowerCase().replace(' ', '-')}`}>
-                        {app.status}
-                      </span>
-                    </td>
-                    <td>
-                      <button className="edit-btn">Gestionar</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        {/* Kanban Board Section */}
+        <AppointmentsKanban 
+          appointments={appointments}
+          setAppointments={handleAddAppointment} // Usamos la función de agregar
+          onUpdateStatus={handleUpdateStatus} // Nueva prop para actualizar estado
+          filter={filter}
+          setFilter={setFilter}
+          specificDate={specificDate}
+          setSpecificDate={setSpecificDate}
+        />
       </div>
 
       <style dangerouslySetInnerHTML={{ __html: `
         .admin-dashboard { 
           padding: 60px 0 40px; 
-          background: #050505; 
+          background: transparent; 
+          position: relative;
+          z-index: 5;
         }
         
         .admin-header-main { 
@@ -118,6 +179,16 @@ const AdminDashboard = () => {
         
         .admin-title-area h1 { font-size: clamp(2.5rem, 5vw, 3.5rem); line-height: 1; margin: 10px 0; }
         .admin-title-area p { font-size: 1rem; color: var(--text-muted); }
+
+        .badge-red-typo {
+          display: block;
+          color: var(--primary);
+          font-weight: 800;
+          font-size: 0.75rem;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+          margin-bottom: 10px;
+        }
 
         .admin-actions-group { display: flex; gap: 15px; }
         
@@ -178,100 +249,6 @@ const AdminDashboard = () => {
         .stat-info h3 { font-size: 1.8rem; margin-bottom: 2px; }
         .stat-info p { color: var(--text-muted); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
 
-        .admin-content-section { padding: 30px; border-radius: 24px; margin-bottom: 40px; }
-        .section-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 30px;
-        }
-        .section-header h3 { font-size: 1.5rem; }
-        
-        .actions { display: flex; gap: 12px; }
-        .search-box {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          background: rgba(255,255,255,0.03);
-          padding: 8px 16px;
-          border-radius: 100px;
-          border: 1px solid rgba(255,255,255,0.1);
-          width: 250px;
-        }
-        .search-box input {
-          background: none;
-          border: none;
-          color: white;
-          outline: none;
-          width: 100%;
-          font-family: inherit;
-          font-size: 0.9rem;
-        }
-
-        .table-responsive { overflow-x: auto; }
-        .admin-table {
-          width: 100%;
-          border-collapse: separate;
-          border-spacing: 0 8px;
-          text-align: left;
-        }
-        .admin-table th {
-          padding: 12px 16px;
-          color: var(--text-muted);
-          font-weight: 700;
-          text-transform: uppercase;
-          font-size: 0.8rem;
-          letter-spacing: 1px;
-        }
-        .admin-table td {
-          padding: 16px;
-          background: rgba(255,255,255,0.02);
-          border-top: 1px solid rgba(255,255,255,0.03);
-          border-bottom: 1px solid rgba(255,255,255,0.03);
-          font-size: 0.9rem;
-        }
-        .admin-table td:first-child { border-radius: 12px 0 0 12px; border-left: 1px solid rgba(255,255,255,0.03); }
-        .admin-table td:last-child { border-radius: 0 12px 12px 0; border-right: 1px solid rgba(255,255,255,0.03); }
-
-        .badge {
-          padding: 4px 12px;
-          border-radius: 100px;
-          font-size: 0.75rem;
-          font-weight: 700;
-          text-transform: uppercase;
-        }
-        .badge.pendiente { background: rgba(255,145,0,0.1); color: #ff9100; }
-        .badge.en-proceso { background: rgba(41,121,255,0.1); color: #2979ff; }
-        .badge.completado { background: rgba(0,200,83,0.1); color: #00c853; }
-
-        .edit-btn {
-          background: rgba(255,255,255,0.05);
-          color: white;
-          font-weight: 700;
-          border: 1px solid rgba(255,255,255,0.1);
-          padding: 6px 14px;
-          border-radius: 8px;
-          cursor: pointer;
-          transition: 0.3s;
-          font-size: 0.85rem;
-        }
-        .edit-btn:hover { background: var(--primary); border-color: var(--primary); }
-
-        .icon-btn {
-          background: rgba(255,255,255,0.05);
-          color: white;
-          width: 40px;
-          height: 40px;
-          border-radius: 10px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border: 1px solid rgba(255,255,255,0.1);
-          cursor: pointer;
-          transition: 0.3s;
-        }
-        .icon-btn:hover { background: rgba(255,255,255,0.1); border-color: white; }
-
         @media (max-width: 1024px) {
           .admin-dashboard { padding: 80px 0 20px; }
           .admin-header-main { flex-direction: column; align-items: flex-start; gap: 20px; margin-bottom: 30px; }
@@ -281,9 +258,6 @@ const AdminDashboard = () => {
           .admin-stats-grid { gap: 15px; margin-bottom: 30px; }
           .stat-card { padding: 20px; gap: 15px; }
           .stat-info h3 { font-size: 1.5rem; }
-          .admin-content-section { padding: 20px; border-radius: 20px; }
-          .section-header { margin-bottom: 25px; flex-direction: column; align-items: flex-start; gap: 15px; }
-          .search-box { width: 100%; }
         }
       `}} />
     </div>

@@ -1,22 +1,35 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../App';
+import { useAuth } from '../useAuth';
+import { supabase } from '../lib/supabase';
 import { Lock, Mail, User as UserIcon, ShieldCheck } from 'lucide-react';
 
 const Login = () => {
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+  const [loading, setLoading] = useState(false);
+  
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Simulation of login
-    const userData = isAdmin 
-      ? { role: 'admin', name: 'Administrador Los Pits' }
-      : { role: 'user', name: 'Juan Perez' };
+    setError(null);
+    setSuccess(null);
+    setLoading(true);
     
-    login(userData);
-    navigate(isAdmin ? '/admin' : '/booking');
+    try {
+      await login(email, password);
+      navigate('/admin');
+    } catch (err) {
+      setError(err.message || 'Error en la operación');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -25,32 +38,54 @@ const Login = () => {
         <div className="login-card glass-card">
           <div className="login-header">
             <div className="login-icon">
-              {isAdmin ? <ShieldCheck size={40} /> : <UserIcon size={40} />}
+              {isRegistering ? <UserIcon size={40} /> : (isAdmin ? <ShieldCheck size={40} /> : <UserIcon size={40} />)}
             </div>
-            <h2>{isAdmin ? 'Panel de Administración' : 'Bienvenido de Nuevo'}</h2>
-            <p>Ingresa tus credenciales para continuar</p>
+            <h2>{isRegistering ? 'Crear Cuenta' : (isAdmin ? 'Panel de Administración' : 'Bienvenido de Nuevo')}</h2>
+            <p>{isRegistering ? 'Únete a la comunidad de Los Pits' : 'Ingresa tus credenciales para continuar'}</p>
+            {error && <div className="error-message">{error}</div>}
+            {success && <div className="success-message">{success}</div>}
           </div>
 
           <form onSubmit={handleSubmit}>
             <div className="input-group">
               <Mail size={20} className="i-icon" />
-              <input type="email" placeholder="Correo Electrónico" required />
+              <input 
+                type="email" 
+                placeholder="Correo Electrónico" 
+                required 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
             </div>
             <div className="input-group">
               <Lock size={20} className="i-icon" />
-              <input type="password" placeholder="Contraseña" required />
+              <input 
+                type="password" 
+                placeholder="Contraseña" 
+                required 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
             </div>
 
-            <button type="submit" className="btn-primary w-full">
-              Iniciar Sesión
+            <button type="submit" className="btn-primary w-full" disabled={loading}>
+              {loading ? 'Procesando...' : (isRegistering ? 'Registrarse' : 'Iniciar Sesión')}
             </button>
           </form>
 
           <div className="login-footer">
-            <button onClick={() => setIsAdmin(!isAdmin)} className="toggle-btn">
-              <ShieldCheck size={16} />
-              {isAdmin ? 'Volver a Acceso Clientes' : 'Acceso para Administradores'}
-            </button>
+            {!isAdmin && (
+              <button onClick={() => { setIsRegistering(!isRegistering); setError(null); }} className="toggle-btn">
+                {isRegistering ? '¿Ya tienes cuenta? Inicia Sesión' : '¿No tienes cuenta? Regístrate'}
+              </button>
+            )}
+            
+            {!isRegistering && (
+              <button onClick={() => { setIsAdmin(!isAdmin); setError(null); }} className="toggle-btn" style={{ marginTop: '10px' }}>
+                <ShieldCheck size={16} />
+                {isAdmin ? 'Volver a Acceso Clientes' : 'Acceso para Administradores'}
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -107,6 +142,26 @@ const Login = () => {
         .login-header p { 
           color: var(--text-muted); 
           font-size: 0.95rem;
+        }
+        .error-message {
+          background: rgba(230, 0, 0, 0.1);
+          border: 1px solid rgba(230, 0, 0, 0.2);
+          color: var(--primary);
+          padding: 10px;
+          border-radius: 8px;
+          margin-top: 15px;
+          font-size: 0.85rem;
+          font-weight: 600;
+        }
+        .success-message {
+          background: rgba(0, 230, 0, 0.1);
+          border: 1px solid rgba(0, 230, 0, 0.2);
+          color: #00e600;
+          padding: 10px;
+          border-radius: 8px;
+          margin-top: 15px;
+          font-size: 0.85rem;
+          font-weight: 600;
         }
 
         .input-group {
