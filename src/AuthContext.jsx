@@ -43,10 +43,12 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (email, password) => {
-    // MOCK LOGIN TEMPORAL (Saltando Supabase)
-    const mockUser = { role: 'admin', name: 'Admin Local' };
-    setUser(mockUser);
-    return { user: mockUser };
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (error) throw error;
+    return data;
   };
 
   const logout = async () => {
@@ -55,12 +57,8 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
-  const mockLogin = () => {
-    setUser({ role: 'admin', name: 'Admin Local' });
-  };
-
   return (
-    <AuthContext.Provider value={{ user, login, logout, mockLogin, loading }}>
+    <AuthContext.Provider value={{ user, login, logout, loading }}>
       {!loading && children}
     </AuthContext.Provider>
   );

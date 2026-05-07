@@ -23,8 +23,7 @@ const Login = () => {
     setLoading(true);
     
     try {
-      // Usando mock login para saltar autenticación
-      await login(email || 'admin@demo.com', password || 'admin123');
+      await login(email, password);
       navigate('/admin');
     } catch (err) {
       setError(err.message || 'Error en la operación');

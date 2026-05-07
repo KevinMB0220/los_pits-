@@ -11,6 +11,7 @@ const columns = [
 const AppointmentsKanban = ({ 
   appointments, 
   setAppointments, 
+  onUpdateStatus, // Recibimos la función para actualizar en Supabase
   filter, 
   setFilter, 
   specificDate, 
@@ -45,11 +46,15 @@ const AppointmentsKanban = ({
     if (!draggedItem) return;
     
     if (draggedItem.status !== targetStatus) {
-      setAppointments(prev => 
-        prev.map(app => 
-          app.id === draggedItem.id ? { ...app, status: targetStatus } : app
-        )
-      );
+      if (onUpdateStatus) {
+        onUpdateStatus(draggedItem.id, targetStatus);
+      } else {
+        setAppointments(prev => 
+          prev.map(app => 
+            app.id === draggedItem.id ? { ...app, status: targetStatus } : app
+          )
+        );
+      }
     }
   };
 
@@ -57,14 +62,15 @@ const AppointmentsKanban = ({
     e.preventDefault();
     const formData = new FormData(e.target);
     const newApp = {
-      id: Date.now().toString(),
       user: formData.get('user'),
       service: formData.get('service'),
       date: formData.get('date'),
       time: formData.get('time'),
       status: 'pendiente'
     };
-    setAppointments([...appointments, newApp]);
+    
+    // Si tenemos setAppointments (que ahora es handleAddAppointment en el padre)
+    setAppointments(newApp);
     setIsSidebarOpen(false);
   };
 
@@ -74,7 +80,7 @@ const AppointmentsKanban = ({
 
     return appointments.filter(app => {
       if (filter === 'today') return app.date === today;
-      if (filter === 'month') return app.date.startsWith(currentMonth);
+      if (filter === 'month') return app.date && app.date.startsWith(currentMonth);
       if (filter === 'specific' && specificDate) return app.date === specificDate;
       return true;
     });
@@ -160,7 +166,7 @@ const AppointmentsKanban = ({
                     >
                       <div className="card-top">
                         <span className="card-time">{app.time}</span>
-                        <span className="card-id">#{app.id.slice(-4)}</span>
+                        <span className="card-id">#{String(app.id).slice(-4)}</span>
                       </div>
                       <h4>{app.user}</h4>
                       <p>{app.service}</p>
@@ -188,7 +194,7 @@ const AppointmentsKanban = ({
             <tbody>
               {filteredAppointments.map(app => (
                 <tr key={app.id}>
-                  <td>#{app.id.slice(-4)}</td>
+                  <td>#{String(app.id).slice(-4)}</td>
                   <td>{app.user}</td>
                   <td>{app.service}</td>
                   <td>{app.date} - {app.time}</td>

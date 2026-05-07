@@ -1,6 +1,7 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Users, Calendar, TrendingUp, DollarSign, ShoppingBag } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 
 import AppointmentsKanban from '../components/AppointmentsKanban';
 
@@ -11,28 +12,71 @@ const SERVICE_PRICES = {
   'Viseras y Calcas': 75
 };
 
-const initialAppointmentsData = [
-  { id: '1', user: 'Juan Perez', service: 'Lavado Ultra con Tratamiento', status: 'pendiente', time: '10:30 AM', date: '2026-05-06' },
-  { id: '2', user: 'Maria Garcia', service: 'Audio', status: 'en-proceso', time: '11:00 AM', date: '2026-05-06' },
-  { id: '3', user: 'Carlos Ruiz', service: 'Autodecoración', status: 'terminado', time: '09:00 AM', date: '2026-05-06' },
-  { id: '4', user: 'Ana Lopez', service: 'Viseras y Calcas', status: 'recogido', time: '02:00 PM', date: '2026-05-06' },
-];
-
 const AdminDashboard = () => {
-  const [appointments, setAppointments] = useState(initialAppointmentsData);
+  const [appointments, setAppointments] = useState([]);
   const [filter, setFilter] = useState('today');
   const [specificDate, setSpecificDate] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  // Cargar citas desde Supabase
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      if (!supabase) return;
+      try {
+        const { data, error } = await supabase
+          .from('appointments')
+          .select('*');
+        
+        if (error) throw error;
+        setAppointments(data || []);
+      } catch (err) {
+        console.error('Error al cargar citas:', err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAppointments();
+  }, []);
+
+  // Función para actualizar estado en Supabase
+  const handleUpdateStatus = async (id, newStatus) => {
+    try {
+      const { error } = await supabase
+        .from('appointments')
+        .update({ status: newStatus })
+        .eq('id', id);
+      
+      if (error) throw error;
+      setAppointments(prev => prev.map(app => app.id === id ? { ...app, status: newStatus } : app));
+    } catch (err) {
+      console.error('Error al actualizar estado:', err.message);
+    }
+  };
+
+  // Función para agregar cita en Supabase
+  const handleAddAppointment = async (newApp) => {
+    try {
+      const { data, error } = await supabase
+        .from('appointments')
+        .insert([newApp])
+        .select();
+      
+      if (error) throw error;
+      setAppointments(prev => [...prev, ...(data || [])]);
+    } catch (err) {
+      console.error('Error al agregar cita:', err.message);
+    }
+  };
 
   // Dinámicamente calcular las estadísticas
   const stats = useMemo(() => {
     const todayStr = new Date().toISOString().split('T')[0];
     const currentMonthStr = todayStr.substring(0, 7);
     
-    // Filtrar por hoy y por mes para cálculos base
     const todayAppointments = appointments.filter(a => a.date === todayStr);
-    const monthAppointments = appointments.filter(a => a.date.startsWith(currentMonthStr));
+    const monthAppointments = appointments.filter(a => a.date && a.date.startsWith(currentMonthStr));
     
-    // Ingresos: suma de servicios terminados o recogidos en el mes
     const monthlyRevenue = monthAppointments.reduce((acc, curr) => {
       if (['terminado', 'recogido'].includes(curr.status)) {
         return acc + (SERVICE_PRICES[curr.service] || 0);
@@ -40,10 +84,8 @@ const AdminDashboard = () => {
       return acc;
     }, 0);
 
-    // Clientes únicos este mes
     const uniqueClientsMonth = new Set(monthAppointments.map(a => a.user)).size;
     
-    // Ajustar el primer contador según el filtro seleccionado
     let displayAppointmentsCount = todayAppointments.length;
     let appointmentsLabel = 'Citas Hoy';
     
@@ -62,6 +104,14 @@ const AdminDashboard = () => {
       { label: 'Crecimiento', value: '+18.5%', icon: <TrendingUp />, color: '#ff9100' },
     ];
   }, [appointments, filter, specificDate]);
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#050505', color: 'white' }}>
+        <p>Cargando datos del panel...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="admin-dashboard">
@@ -101,7 +151,8 @@ const AdminDashboard = () => {
         {/* Kanban Board Section */}
         <AppointmentsKanban 
           appointments={appointments}
-          setAppointments={setAppointments}
+          setAppointments={handleAddAppointment} // Usamos la función de agregar
+          onUpdateStatus={handleUpdateStatus} // Nueva prop para actualizar estado
           filter={filter}
           setFilter={setFilter}
           specificDate={specificDate}
