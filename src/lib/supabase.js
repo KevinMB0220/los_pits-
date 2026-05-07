@@ -7,4 +7,8 @@ if (!supabaseUrl || !supabaseAnonKey) {
   console.warn('Supabase credentials missing. Check your .env file.');
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+const isValidUrl = (url) => { try { return Boolean(new URL(url)); } catch { return false; } };
+
+export const supabase = isValidUrl(supabaseUrl) && supabaseAnonKey
+  ? createClient(supabaseUrl, supabaseAnonKey)
+  : null;

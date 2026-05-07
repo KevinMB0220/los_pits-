@@ -23,23 +23,9 @@ const Login = () => {
     setLoading(true);
     
     try {
-      if (isRegistering) {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: {
-              role: 'user',
-              name: email.split('@')[0]
-            }
-          }
-        });
-        if (error) throw error;
-        setSuccess('¡Cuenta creada! Revisa tu correo (o la consola de Docker) para confirmar.');
-      } else {
-        await login(email, password);
-        navigate('/'); 
-      }
+      // Usando mock login para saltar autenticación
+      await login(email || 'admin@demo.com', password || 'admin123');
+      navigate('/admin');
     } catch (err) {
       setError(err.message || 'Error en la operación');
     } finally {

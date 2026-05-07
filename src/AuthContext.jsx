@@ -7,7 +7,11 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check active sessions and sets the user
+    if (!supabase) {
+      setLoading(false);
+      return;
+    }
+
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
@@ -22,7 +26,6 @@ export const AuthProvider = ({ children }) => {
 
     checkSession();
 
-    // Listen for changes on auth state (logged in, signed out, etc.)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session) {
         setUser({
@@ -40,12 +43,10 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (email, password) => {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    if (error) throw error;
-    return data;
+    // MOCK LOGIN TEMPORAL (Saltando Supabase)
+    const mockUser = { role: 'admin', name: 'Admin Local' };
+    setUser(mockUser);
+    return { user: mockUser };
   };
 
   const logout = async () => {
@@ -54,8 +55,12 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const mockLogin = () => {
+    setUser({ role: 'admin', name: 'Admin Local' });
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, logout, mockLogin, loading }}>
       {!loading && children}
     </AuthContext.Provider>
   );
